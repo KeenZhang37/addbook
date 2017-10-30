@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="../js/vue.js" type="text/javascript" charset="utf-8"></script>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			table {
+				position: relative;
+				width: 50%;
+				margin: 0 auto;
+				margin-top: 100px;
+				margin-bottom: 20px;
+				border-width: 1px 1px 0 1px;
+				border-style: solid;
+				border-color: #CDCDCD;
+			}
+			
+			tbody {}
+			
+			.book_wrap th {
+				width: 10%;
+				height: 30px;
+				line-height: 30px;
+				text-align: center;
+				color: #000000;
+				border-bottom: 1px solid #CDCDCD;
+			}
+			
+			.book_wrap td {
+				height: 30px;
+				line-height: 30px;
+				text-align: center;
+				border-right: 1px solid #CDCDCD;
+				border-bottom: 1px solid #CDCDCD;
+			}
+			
+			.add_wrap {
+				position: relative;
+				width: 50%;
+				height: 180px;
+				margin: 0 auto;
+				border: 1px solid #6C6C6C;
+				padding-top: 30px;
+				padding-left: 15px;
+				box-sizing: border-box;
+			}
+			
+			.add_wrap>span {
+				width: 64px;
+				height: 20px;
+				background: #fff;
+				line-height: 20px;
+				position: absolute;
+				left: 26px;
+				top: -10px;
+			}
+			
+			.add_wrap p {
+				height: 30px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="wrap">
+			<div class="book_wrap">
+				<table cellspacing="0">
+					<thead>
+						<th>ID</th>
+						<th>书名</th>
+						<th>作者</th>
+						<th>价格</th>
+						<th>操作</th>
+					</thead>
+					<tbody>
+						<tr v-for="(items,index) in dataList">
+							<td>{{index+1}}</td>
+							<td>{{items.name}}</td>
+							<td>{{items.author}}</td>
+							<td>{{items.price}}</td>
+							<td><button v-on:click="del(index)">删除</button></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="add_wrap">
+				<span>添加新书</span>
+				<p class="name">书名：<input type="text" v-model="name" /></p>
+				<p class="author">作者：<input type="text" v-model="author" /></p>
+				<p class="price">价格：<input type="text" v-model="price" /></p>
+				<p><button v-on:click="add()">添加</button></p>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			if(!window.localStorage) {
+				alert("浏览器支持localstorage");
+			} else {
+				var storage = window.localStorage;
+				var Add = new Vue({
+					el: '.wrap',
+					data: {
+						ID: '',
+						name: '',
+						author: '',
+						price: '',
+						dataList: []
+					},
+					methods: {
+						init: function() {
+							var localData = JSON.parse(storage.getItem("key"));
+							if(localData) {
+								for(var i = 0; i < localData.length; i++) {
+									this.dataList.push(localData[i]);
+								}
+							}
+						},
+						add: function() {
+							var list = {
+								name: this.name,
+								author: this.author,
+								price: this.price,
+							};
+							this.dataList.push(list);
+							console.log(JSON.stringify(this.dataList))
+							storage.setItem("key", JSON.stringify(this.dataList));
+							this.name = '';
+							this.author = '';
+							this.price = '';
+						},
+						del: function(index) {
+							this.dataList.splice(index, 1);
+							localStorage.setItem('key', JSON.stringify(this.dataList))
+						},
+					}
+				});
+			}
+			Add.init();
+		</script>
+	</body>
+
+</html>
